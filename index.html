@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#07172e" />
+  <title>Приглашение ✨</title>
+  <style>
+    :root { color-scheme: dark; --ink:#f7f9fd; --muted:#c2cddd; --navy:#315f91; --navy-deep:#254d7a; --paper:#07172e; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100svh; color:var(--ink); font-family: ui-rounded, "SF Pro Rounded", "Segoe UI", system-ui, sans-serif; background: radial-gradient(ellipse at 12% 8%, #142b4b 0, transparent 38%), radial-gradient(ellipse at 88% 88%, #102644 0, transparent 38%), #07172e; }
+    button { font:inherit; }
+    .app { min-height:100svh; display:grid; place-items:center; padding:24px 18px calc(24px + env(safe-area-inset-bottom)); overflow:hidden; }
+    .screen { width:min(100%, 680px); text-align:center; animation: screen-in .55s cubic-bezier(.2,.8,.2,1) both; }
+    .eyebrow { margin:0 0 12px; color:#d8e5f5; font-size:.78rem; font-weight:800; letter-spacing:.16em; text-transform:uppercase; }
+    h1 { margin:0; font-size:clamp(2.15rem, 8vw, 4.1rem); line-height:1.04; letter-spacing:-.055em; }
+    .intro { max-width:480px; margin:18px auto 0; color:var(--muted); font-size:clamp(1rem, 3.5vw, 1.18rem); line-height:1.6; }
+    .actions { display:flex; justify-content:center; align-items:center; gap:14px; margin-top:34px; min-height:60px; }
+    .btn { min-width:132px; border:0; border-radius:999px; padding:16px 25px; font-weight:800; cursor:pointer; transition:transform .18s, box-shadow .18s, background .18s; touch-action:manipulation; }
+    .btn:active { transform:scale(.96); }
+    .btn-primary { color:white; background:var(--navy); box-shadow:0 9px 22px #0008; }
+    .btn-primary:hover { transform:translateY(-2px); background:var(--navy-deep); box-shadow:0 12px 26px #0009; }
+    .btn-no { color:#fff; background:#102744; border:1px solid #486384; box-shadow:0 5px 16px #0006; transition:transform .18s, box-shadow .18s, background .18s, left .2s ease, top .2s ease; }
+    .no-hint { min-height:20px; margin:15px 0 0; color:#c2cddd; font-size:.82rem; }
+    .choice-grid { display:grid; grid-template-columns:repeat(2,minmax(0,250px)); justify-content:center; gap:22px; margin:34px auto 0; }
+    .choice { display:flex; flex-direction:column; align-items:stretch; gap:12px; padding:11px 11px 15px; color:inherit; background:#0b1e38; border:1px solid #253d5c; border-radius:22px; box-shadow:0 12px 32px #0005; cursor:pointer; transition:transform .2s, box-shadow .2s, border-color .2s; }
+    .choice:hover { transform:translateY(-5px); border-color:#6985a8; box-shadow:0 18px 34px #0008; }
+    .photo-slot { position:relative; display:grid; place-items:center; width:100%; aspect-ratio:4/3; overflow:hidden; border-radius:15px; background:linear-gradient(135deg,#1b3454,#132844); color:#e4edf8; }
+    .photo-slot img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+    .photo-slot .placeholder { font-size:2rem; opacity:.75; }
+    .choice-name { font-size:1.03rem; font-weight:800; }
+    .choice-note { color:var(--muted); font-size:.8rem; }
+    .back { margin-top:22px; padding:9px 13px; border:0; color:#d5dfec; background:transparent; cursor:pointer; }
+    .final-photo { width:min(72vw,310px); aspect-ratio:1; margin:28px auto 0; border:8px solid white; border-radius:28px; box-shadow:0 20px 55px #17385f30; transform:scale(.7) rotate(-7deg); opacity:0; animation:photo-pop .8s .12s cubic-bezier(.17,.89,.32,1.35) forwards; }
+    .final-photo .photo-slot { height:100%; aspect-ratio:auto; border-radius:18px; }
+    .final-copy { color:var(--muted); margin:16px auto 0; max-width:430px; line-height:1.6; }
+    .selected { display:inline-block; margin-top:16px; padding:9px 15px; border-radius:999px; color:#fff; background:#183455; border:1px solid #3c587b; font-weight:800; }
+    .restart { margin-top:24px; min-width:0; padding:12px 18px; color:#fff; background:#102744; border:1px solid #486384; box-shadow:0 5px 16px #0006; }
+    @keyframes screen-in { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes photo-pop { 60% { opacity:1; transform:scale(1.04) rotate(3deg); } 100% { opacity:1; transform:scale(1) rotate(0); } }
+    @media (max-width:560px) {
+      .app { padding-inline:16px; }
+      .choice-grid { grid-template-columns:minmax(0,1fr); gap:13px; margin-top:26px; }
+      .choice { display:grid; grid-template-columns:112px 1fr; grid-template-rows:1fr auto; align-items:center; column-gap:14px; padding:9px; text-align:left; }
+      .choice .photo-slot { grid-row:1 / 3; width:112px; aspect-ratio:1; }
+      .choice-name { align-self:end; }
+      .choice-note { align-self:start; }
+      .actions { gap:10px; }
+      .btn { min-width:122px; padding:15px 18px; }
+    }
+    @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:.01ms!important; animation-iteration-count:1!important; scroll-behavior:auto!important; } }
+  </style>
+</head>
+<body>
+  <main class="app" id="app" aria-live="polite"></main>
+  <script>
+    const app = document.querySelector('#app');
+    const plans = [
+      { name: 'Выставка', note: 'смотрим и обсуждаем(и не осуждаем)', icon: '🖼️', image: 'img/why_cant_i_draw.JPG' },
+      { name: 'Ужин', note: 'вкусно и в приятной компании', icon: '🍸', image: 'img/horse_with_wine.JPG' }
+    ];
+    let noButton, dodgeCount = 0;
+
+    function renderInvite() {
+      app.innerHTML = `<section class="screen">
+        <p class="eyebrow"></p>
+        <h1>Проект<br>по восстановлению вайба</h1>
+        <p class="intro">Звучит интересно, что думаешь?</p>
+        <div class="actions"><button class="btn btn-primary" id="yes">Газ 🏎️</button><button class="btn btn-no" id="no">Не 🫥</button></div>
+        <p class="no-hint" id="hint"></p>
+      </section>`;
+      document.querySelector('#yes').addEventListener('click', renderChoices);
+      noButton = document.querySelector('#no');
+      noButton.addEventListener('pointerenter', dodge);
+      noButton.addEventListener('pointerdown', (event) => { event.preventDefault(); dodge(); });
+      noButton.addEventListener('click', (event) => { event.preventDefault(); dodge(); });
+      noButton.addEventListener('focus', dodge);
+    }
+    function dodge() {
+      if (!noButton || !noButton.isConnected) return;
+      dodgeCount++;
+      const rect = noButton.getBoundingClientRect();
+      noButton.style.position = 'fixed';
+      noButton.style.zIndex = '5';
+      const pad = 12;
+      const centerX = innerWidth / 2;
+      const centerY = innerHeight / 2;
+      // Keep the entire 300px circle inside the viewport, including the button itself.
+      const radius = Math.max(0, Math.min(300,
+        centerX - rect.width / 2 - pad,
+        innerWidth - centerX - rect.width / 2 - pad,
+        centerY - rect.height / 2 - pad,
+        innerHeight - centerY - rect.height / 2 - pad
+      ));
+      const angle = Math.random() * Math.PI * 2;
+      const distance = radius * Math.sqrt(Math.random());
+      const x = centerX + Math.cos(angle) * distance - rect.width / 2;
+      const y = centerY + Math.sin(angle) * distance - rect.height / 2;
+      noButton.style.left = `${x}px`; noButton.style.top = `${y}px`;
+      document.querySelector('#hint').textContent = dodgeCount > 1 ? '🙈' : '😶‍🌫️';
+    }
+    function renderChoices() {
+      app.innerHTML = `<section class="screen">
+        <p class="eyebrow"></p><h1>Какой план<br>тебе ближе?</h1>
+        <p class="intro">Нажми на картинку или название — подстроимся под твой вариант.</p>
+        <div class="choice-grid">${plans.map((plan, index) => `<button class="choice" data-plan="${index}" aria-label="Выбрать: ${plan.name}">
+          <span class="photo-slot"><span class="placeholder" aria-hidden="true">${plan.icon}</span><img src="${plan.image}" alt="${plan.name}"></span>
+          <span class="choice-name">${plan.name}</span><span class="choice-note">${plan.note}</span>
+        </button>`).join('')}</div>
+        <button class="back" id="back">← Назад</button>
+      </section>`;
+      document.querySelectorAll('.choice').forEach(button => button.addEventListener('click', () => renderFinal(plans[Number(button.dataset.plan)])));
+      document.querySelector('#back').addEventListener('click', renderInvite);
+    }
+    function renderFinal(plan) {
+      app.innerHTML = `<section class="screen">
+        <p class="eyebrow"></p><h1>Отличный выбор!</h1>
+        <div class="final-photo"><div class="photo-slot"><span class="placeholder" aria-hidden="true">✨</span><img src="img/67_Bear.JPG" alt="Медведь"></div></div>
+        <span class="selected">${plan.icon} ${plan.name}</span>
+        <p class="final-copy">День и время согласуем вместе в TГ</p>
+        <button class="btn restart" id="restart">Посмотреть ещё раз</button>
+      </section>`;
+      document.querySelector('#restart').addEventListener('click', renderChoices);
+    }
+    renderInvite();
+  </script>
+</body>
+</html>
