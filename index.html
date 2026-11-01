@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#07172e" />
-  <title>Приглашение ✨</title>
+  <title>Аэрогрильный проект</title>
   <style>
     :root { color-scheme: dark; --ink:#f7f9fd; --muted:#c2cddd; --navy:#315f91; --navy-deep:#254d7a; --paper:#07172e; }
     * { box-sizing:border-box; }
@@ -56,8 +56,8 @@
   <script>
     const app = document.querySelector('#app');
     const plans = [
-      { name: 'Выставка', note: 'смотрим и обсуждаем(и не осуждаем)', icon: '🖼️', image: 'img/why_cant_i_draw.JPG' },
-      { name: 'Ужин', note: 'вкусно и в приятной компании', icon: '🍸', image: 'img/horse_with_wine.JPG' }
+      { name: 'Искусство понимать', note: 'смотрим, обсуждаем, не осуждаем', icon: '🖼️', image: 'img/why_cant_i_draw.JPG' },
+      { name: 'Минус голод, плюс вайб', note: 'вкусно и в приятной компании', icon: '🍸', image: 'img/horse_with_wine.JPG' }
     ];
     let noButton, dodgeCount = 0;
 
@@ -113,9 +113,12 @@
       document.querySelector('#back').addEventListener('click', renderInvite);
     }
     function renderFinal(plan) {
+      const finalImage = plan.name === 'Искусство понимать'
+        ? 'img/minion_kanye.jpg'
+        : 'img/67_Bear.JPG';
       app.innerHTML = `<section class="screen">
         <p class="eyebrow"></p><h1>Отличный выбор!</h1>
-        <div class="final-photo"><div class="photo-slot"><span class="placeholder" aria-hidden="true">✨</span><img src="img/67_Bear.JPG" alt="Медведь"></div></div>
+        <div class="final-photo"><div class="photo-slot"><span class="placeholder" aria-hidden="true">✨</span><img src="${finalImage}" alt="Финальное фото"></div></div>
         <span class="selected">${plan.icon} ${plan.name}</span>
         <p class="final-copy">День и время согласуем вместе в TГ</p>
         <button class="btn restart" id="restart">Посмотреть ещё раз</button>
